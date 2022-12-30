@@ -30,6 +30,7 @@ import de.dotwee.micropinner.database.PinSpec;
 import de.dotwee.micropinner.receiver.OnDeleteReceiver;
 import de.dotwee.micropinner.tools.NotificationTools;
 import de.dotwee.micropinner.tools.PreferencesHandler;
+import de.dotwee.micropinner.view.custom.DialogContentView;
 
 /**
  * Created by Lukas Wolfsteiner on 29.10.2015.
@@ -308,6 +309,9 @@ public class MainPresenterImpl implements MainPresenter {
             handleParentTitle(parentPin);
             handleParentContent(parentPin);
 
+            handleParentColor(parentPin);
+            handleParentGroupId(parentPin);
+
             CheckBox checkBoxPersistent = activity.findViewById(R.id.checkBoxPersistentPin);
             if (checkBoxPersistent != null) {
 
@@ -389,6 +393,26 @@ public class MainPresenterImpl implements MainPresenter {
         if (editTextContent != null) {
 
             editTextContent.setText(pin.getContent());
+        }
+    }
+
+    @Override
+    public void handleParentColor(@NonNull PinSpec pin) {
+
+        Spinner spinnerColor = activity.findViewById(R.id.spinnerColor);
+        if (spinnerColor != null) {
+
+            spinnerColor.setSelection(pin.getColor(), true);
+        }
+    }
+
+    @Override
+    public void handleParentGroupId(@NonNull PinSpec pin) {
+
+        DialogContentView contentView = activity.findViewById(R.id.dialogContentView);
+        if (contentView != null) {
+
+            contentView.setSelectedGroupId(pin.getGroupId());
         }
     }
 }

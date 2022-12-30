@@ -125,7 +125,7 @@ public class PinSpec implements Serializable {
     }
 
     private void setColor(int color) {
-        if (color < 0 || color > 4) {
+        if (color < 0 || 3 < color) {
             throw new RuntimeException("Invalid color value " + color);
         }
         this.color = color;

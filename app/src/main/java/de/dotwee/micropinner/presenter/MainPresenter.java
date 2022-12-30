@@ -113,6 +113,20 @@ public interface MainPresenter {
     void handleParentContent(@NonNull PinSpec pin);
 
     /**
+     * This method handles the color of an instance of a {@link PinSpec}.
+     *
+     * @param pin the instance to handle
+     */
+    void handleParentColor(@NonNull PinSpec pin);
+
+    /**
+     * This method handles the group id of an instance of a {@link PinSpec}.
+     *
+     * @param pin the instance to handle
+     */
+    void handleParentGroupId(@NonNull PinSpec pin);
+
+    /**
      * Created by Lukas Wolfsteiner on 29.10.2015.
      */
     interface Data {

@@ -8,9 +8,13 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.Spinner;
 
+import androidx.annotation.Nullable;
+
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Map;
 import java.util.Objects;
+import java.util.TreeMap;
 
 import de.dotwee.micropinner.R;
 import de.dotwee.micropinner.database.PinDatabase;
@@ -92,30 +96,67 @@ public class DialogContentView extends AbstractDialogView
         }
     }
 
+    /**
+     * Get names to show in the group spinner. This always returns the names in the same order.
+     *
+     * @return Group names to show in the spinner.
+     */
     private ArrayList<String> getGroupNames() {
         Map<Long, String> groups = PinDatabase.getInstance(getContext()).getAllGroups();
-        ArrayList<String> groupNames =  new ArrayList<>(groups.values());
+
+        // Use TreeMap so that order is always the same
+        // https://stackoverflow.com/questions/922528/how-can-i-sort-map-values-by-key-in-java
+        ArrayList<String> groupNames =  new ArrayList<>(new TreeMap<>(groups).values());
 
         String defaultName = this.getResources().getString(R.string.group_default);
+        String unlimitedName = this.getResources().getString(R.string.group_unlimited);
         for (int i = 0; i < groupNames.size(); i++) {
             String name = groupNames.get(i);
             if (Objects.equals(name, defaultName)) {
+                // Reserved name:
                 groupNames.remove(i--);
             } else if (Objects.equals(name, PinDatabase.GROUP_NAME_UNLIMITED)) {
-                groupNames.set(i, this.getResources().getString(R.string.group_unlimited));
+                // Localize the unlimited group:
+                groupNames.set(i, unlimitedName);
             }
         }
 
+        // Sort after names so that ids don't determine the order:
+        Collections.sort(groupNames);
+        // Then add default item first:
         groupNames.add(0, defaultName);
 
         return groupNames;
     }
 
+    /**
+     * Set the group id that is currently selected.
+     *
+     * @param groupId The group id to select or <code>null</code> to select the default group.
+     */
+    public void setSelectedGroupId(@Nullable Long groupId) {
+        if (groupId == null) {
+            spinnerGroup.setSelection(0, true);
+        }
+
+        String name = PinDatabase.getInstance(getContext()).getAllGroups().get(groupId);
+        spinnerGroup.setSelection(getGroupNames().indexOf(name), true);
+    }
+
+    /**
+     * Get the currently selected group id.
+     *
+     * @return The id of the selected group or <code>null</code> if the default group is selected,
+     */
+    @Nullable
     public Long getSelectedGroupId() {
         if (spinnerGroup == null) return null;
         ArrayList<String> shownGroups = getGroupNames();
         int selectedIndex = spinnerGroup.getSelectedItemPosition();
-        if (selectedIndex < 0 || selectedIndex >= shownGroups.size()) return null;
+        if (selectedIndex < 0 || selectedIndex >= shownGroups.size()) {
+            Log.w(TAG, "Unknown group selection index: " + selectedIndex);
+            return null;
+        }
         if (selectedIndex == 0) return null; // Selected default
         String selectedName = shownGroups.get(selectedIndex);
 
