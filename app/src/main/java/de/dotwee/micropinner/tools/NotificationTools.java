@@ -258,6 +258,11 @@ public class NotificationTools {
             builder.setColorized(true).setColor(0xf0a732);
         }
 
+        if (pin.getGroupId() != null) {
+            String groupName = PinDatabase.getInstance(context).getGroup(pin.getGroupId());
+            builder.setGroup(groupName);
+        }
+
         if (pin.getVisibility() == NotificationCompat.VISIBILITY_PRIVATE && !pin.getContent().isEmpty()) {
             // If visibility is hidden then an alternative notification can be shown on the lock screen:
             // More info: https://developer.android.com/develop/ui/views/notifications/build-notification#lockscreenNotification

@@ -42,6 +42,7 @@ public class MainDialog extends AppCompatActivity implements MainPresenter.Data 
     }
 
     private MainPresenter mainPresenter;
+    private DialogContentView contentView;
 
     /**
      * This method checks if the user's device is a tablet, depending on the official resource {@link
@@ -66,7 +67,7 @@ public class MainDialog extends AppCompatActivity implements MainPresenter.Data 
         DialogHeaderView headerView = findViewById(R.id.dialogHeaderView);
         headerView.setMainPresenter(mainPresenter);
 
-        DialogContentView contentView = findViewById(R.id.dialogContentView);
+        contentView = findViewById(R.id.dialogContentView);
         contentView.setMainPresenter(mainPresenter);
 
         DialogFooterView footerView = findViewById(R.id.dialogFooterView);
@@ -217,6 +218,11 @@ public class MainDialog extends AppCompatActivity implements MainPresenter.Data 
     public boolean showActions() {
         CheckBox checkBox = findViewById(R.id.checkBoxShowActions);
         return checkBox != null && checkBox.isChecked();
+    }
+
+    @Override
+    public Long groupId() {
+        return contentView.getSelectedGroupId();
     }
 }
 

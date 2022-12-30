@@ -4,6 +4,7 @@ import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.DatabaseUtils;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat.NotificationVisibility;
 
 import java.io.Serializable;
@@ -26,7 +27,10 @@ public class PinSpec implements Serializable {
     private boolean persistent;
     private boolean showActions;
 
-    public PinSpec(@NonNull String title, @NonNull String content, int visibility, int priority, int color, boolean persistent, boolean showActions) {
+    @Nullable
+    private Long groupId;
+
+    public PinSpec(@NonNull String title, @NonNull String content, int visibility, int priority, int color, boolean persistent, boolean showActions, @Nullable Long groupId) {
 
         this.id = -1;
         this.title = title;
@@ -36,6 +40,7 @@ public class PinSpec implements Serializable {
         this.color = color;
         this.persistent = persistent;
         this.showActions = showActions;
+        this.groupId = groupId;
     }
 
     PinSpec(@NonNull Cursor cursor) {
@@ -50,10 +55,11 @@ public class PinSpec implements Serializable {
         setColor(color == null ? 0 : color + 1);
         setPersistent(contentValues.getAsInteger(PinDatabase.COLUMN_PERSISTENT) != 0);
         setShowActions(contentValues.getAsInteger(PinDatabase.COLUMN_SHOW_ACTIONS) != 0);
+        setGroupId(contentValues.getAsLong(PinDatabase.COLUMN_GROUP_ID));
     }
 
     private PinSpec(int visibility, int priority, int color, @NonNull String title, @NonNull String content,
-                    boolean persistent, boolean showActions) {
+                    boolean persistent, boolean showActions, @Nullable Long groupId) {
 
         setId(-1);
 
@@ -64,6 +70,7 @@ public class PinSpec implements Serializable {
         setContent(content);
         setPersistent(persistent);
         setShowActions(showActions);
+        setGroupId(groupId);
     }
 
     public long getId() {
@@ -140,6 +147,15 @@ public class PinSpec implements Serializable {
         this.showActions = showActions;
     }
 
+    @Nullable
+    public Long getGroupId() {
+        return groupId;
+    }
+
+    private void setGroupId(@Nullable Long groupId) {
+        this.groupId = groupId;
+    }
+
     @NonNull
     ContentValues toContentValues() {
         ContentValues contentValues = new ContentValues();
@@ -153,6 +169,7 @@ public class PinSpec implements Serializable {
         }
         contentValues.put(PinDatabase.COLUMN_PERSISTENT, isPersistent() ? 1 : 0);
         contentValues.put(PinDatabase.COLUMN_SHOW_ACTIONS, isShowActions() ? 1: 0);
+        contentValues.put(PinDatabase.COLUMN_GROUP_ID, getGroupId());
 
         return contentValues;
     }
@@ -178,6 +195,7 @@ public class PinSpec implements Serializable {
                 ", color=" + color +
                 ", persistent=" + persistent +
                 ", showActions=" + showActions +
+                ", groupId=" + groupId +
                 '}';
     }
 }

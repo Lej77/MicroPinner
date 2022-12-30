@@ -3,6 +3,7 @@ package de.dotwee.micropinner.database;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
+import android.database.DatabaseUtils;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
@@ -48,7 +49,7 @@ public class PinDatabase extends SQLiteOpenHelper {
     private static final String CREATE_TABLE_GROUPS = "create table "
             + TABLE_GROUPS + "( "
             + COLUMN_ID + " integer primary key autoincrement, "
-            + GROUP_COLUMN_NAME + " text not null"
+            + GROUP_COLUMN_NAME + " text not null unique"
             + "); ";
     private static final String CREATE_TABLE_PINS = "create table "
             + TABLE_PINS + "( "
@@ -67,6 +68,10 @@ public class PinDatabase extends SQLiteOpenHelper {
             + COLUMN_GROUP_ID + " integer default null, "
             + "FOREIGN KEY("+ COLUMN_GROUP_ID +") REFERENCES "+ TABLE_GROUPS +"("+ COLUMN_ID +")"
             + ");";
+    public static final String GROUP_NAME_UNLIMITED = "unlimited";
+    private static final String CREATE_VALUE_GROUPS = "insert into "
+            + TABLE_GROUPS + " (" + GROUP_COLUMN_NAME + ") values "
+            + "(\"" + GROUP_NAME_UNLIMITED + "\")" ;
     private static final String[] columns = {
             PinDatabase.COLUMN_ID,
             PinDatabase.COLUMN_TITLE,
@@ -100,6 +105,8 @@ public class PinDatabase extends SQLiteOpenHelper {
         try {
             sqLiteDatabase.execSQL(CREATE_TABLE_GROUPS);
             sqLiteDatabase.execSQL(CREATE_TABLE_PINS);
+
+            sqLiteDatabase.execSQL(CREATE_VALUE_GROUPS);
             sqLiteDatabase.setTransactionSuccessful();
         } catch(SQLException sql) {
             Log.e(TAG, "Could not upgrade database", sql);
@@ -125,6 +132,8 @@ public class PinDatabase extends SQLiteOpenHelper {
             sqLiteDatabase.execSQL(CREATE_TABLE_GROUPS);
             sqLiteDatabase.execSQL(CREATE_TABLE_PINS);
 
+            sqLiteDatabase.execSQL(CREATE_VALUE_GROUPS);
+
             // Copy data from old table
             // https://stackoverflow.com/questions/1559789/how-to-copy-data-between-two-tables-in-sqlite
             final String[] oldColumns = {
@@ -141,7 +150,6 @@ public class PinDatabase extends SQLiteOpenHelper {
 
             sqLiteDatabase.execSQL("drop table if exists " + tempTable);
 
-            //do upgrade here
             sqLiteDatabase.setTransactionSuccessful();
         } catch(SQLException sql) {
             Log.e(TAG, "Could not upgrade database", sql);
@@ -251,6 +259,31 @@ public class PinDatabase extends SQLiteOpenHelper {
         Log.i(TAG, "onDatabaseAction() count " + count);
     }
 
+    public String getGroup(long groupId) {
+        // TODO: optimize this
+         return getAllGroups().get(groupId);
+    }
+    /**
+     * This method returns a map of all groups in the database with their id as key.
+     *
+     * @return map of all groups
+     */
+    public Map<Long, String> getAllGroups() {
+        Map<Long, String> groupMap = new ArrayMap<>();
+
+        try (Cursor cursor = database.query(PinDatabase.TABLE_GROUPS, new String[]{COLUMN_ID, GROUP_COLUMN_NAME}, null, null, null, null, null)) {
+            if (cursor.moveToFirst()) {
+                while (!cursor.isAfterLast()) {
+                    ContentValues contentValues = new ContentValues();
+                    DatabaseUtils.cursorRowToContentValues(cursor, contentValues);
+                    long id = contentValues.getAsLong(COLUMN_ID);
+                    groupMap.put(id, contentValues.getAsString(GROUP_COLUMN_NAME));
+                    cursor.moveToNext();
+                }
+            }
+            return groupMap;
+        }
+    }
 
     /**
      * This method returns a map of all pins in the database with their id as key

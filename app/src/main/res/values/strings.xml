@@ -47,4 +47,7 @@
     <string name="color_red" tools:ignore="MissingTranslation">red</string>
     <string name="color_green" tools:ignore="MissingTranslation">green</string>
     <string name="color_blue" tools:ignore="MissingTranslation">blue</string>
+
+    <string name="group_default" tools:ignore="MissingTranslation">default</string>
+    <string name="group_unlimited" tools:ignore="MissingTranslation">unlimited</string>
 </resources>

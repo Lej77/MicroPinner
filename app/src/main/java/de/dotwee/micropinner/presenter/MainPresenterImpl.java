@@ -256,7 +256,16 @@ public class MainPresenterImpl implements MainPresenter {
                 Toast.makeText(activity, R.string.message_empty_title, Toast.LENGTH_SHORT).show();
                 throw new Exception(activity.getString(R.string.message_empty_title));
             } else {
-                return new PinSpec(data.getPinTitle(), data.getPinContent(), data.getVisibility(), data.getPriority(), data.getColor(), data.isPersistent(), data.showActions());
+                return new PinSpec(
+                        data.getPinTitle(),
+                        data.getPinContent(),
+                        data.getVisibility(),
+                        data.getPriority(),
+                        data.getColor(),
+                        data.isPersistent(),
+                        data.showActions(),
+                        data.groupId()
+                );
             }
         } else {
             throw new IllegalStateException("Activity does not implement the Data callback");

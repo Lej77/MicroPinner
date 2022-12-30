@@ -2,6 +2,7 @@ package de.dotwee.micropinner.presenter;
 
 import android.app.Activity;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import de.dotwee.micropinner.database.PinSpec;
 
@@ -165,5 +166,13 @@ public interface MainPresenter {
          * @return State of the show-actions checkbox.
          */
         boolean showActions();
+
+        /**
+         * This method read the value of the groups spinner.
+         *
+         * @return Id of the selected group or null if the default group is selected.
+         */
+        @Nullable
+        Long groupId();
     }
 }
