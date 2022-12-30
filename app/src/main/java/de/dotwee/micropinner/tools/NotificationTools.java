@@ -23,6 +23,7 @@ import android.util.Log;
 import java.util.HashMap;
 import java.util.Map;
 
+import de.dotwee.micropinner.BuildConfig;
 import de.dotwee.micropinner.R;
 import de.dotwee.micropinner.database.PinDatabase;
 import de.dotwee.micropinner.database.PinSpec;
@@ -234,6 +235,10 @@ public class NotificationTools {
                                 new Intent(context, OnDeleteReceiver.class).setAction("notification_cancelled")
                                         .putExtra(EXTRA_INTENT, pin), PendingIntent.FLAG_CANCEL_CURRENT | FLAG_IMMUTABLE))
                         .setOngoing(pin.isPersistent());
+
+        if (BuildConfig.DEBUG) {
+            builder.setColorized(true).setColor(0xA60000);
+        }
 
         if (pin.getVisibility() == NotificationCompat.VISIBILITY_PRIVATE && !pin.getContent().isEmpty()) {
             // If visibility is hidden then an alternative notification can be shown on the lock screen:
