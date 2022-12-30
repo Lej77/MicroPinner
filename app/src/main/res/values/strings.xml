@@ -10,6 +10,8 @@
 
     <string name="input_description_priority">Priority</string>
     <string name="input_description_visibility">Visibility</string>
+    <string name="input_description_color" tools:ignore="MissingTranslation">Color</string>
+    <string name="input_description_group" tools:ignore="MissingTranslation">Group</string>
 
     <string name="input_description_makepinpersistent">Make pin persistent</string>
     <string name="input_description_shownotificationactions">Show notification actions</string>
@@ -40,4 +42,9 @@
     <string name="priority_low">low</string>
     <string name="priority_high">high</string>
     <string name="priority_default">default</string>
+
+    <string name="color_default" tools:ignore="MissingTranslation">default</string>
+    <string name="color_red" tools:ignore="MissingTranslation">red</string>
+    <string name="color_green" tools:ignore="MissingTranslation">green</string>
+    <string name="color_blue" tools:ignore="MissingTranslation">blue</string>
 </resources>

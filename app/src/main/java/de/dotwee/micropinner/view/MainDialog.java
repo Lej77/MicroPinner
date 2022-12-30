@@ -157,6 +157,16 @@ public class MainDialog extends AppCompatActivity implements MainPresenter.Data 
         return 0;
     }
 
+    @Override
+    public int getColor() {
+        Spinner spinner = findViewById(R.id.spinnerColor);
+        if (spinner != null) {
+            return spinner.getSelectedItemPosition();
+        } else {
+            return 0;
+        }
+    }
+
     /**
      * This method reads the value of the title editText widget.
      *

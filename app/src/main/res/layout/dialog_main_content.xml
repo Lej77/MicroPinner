@@ -61,6 +61,33 @@
 
         <TableRow style="@style/DialogView">
 
+            <TextView
+                style="@style/DialogText.Description"
+                android:layout_column="0"
+                android:text="@string/input_description_color" />
+
+            <TextView
+                style="@style/DialogText.Description"
+                android:layout_column="1"
+                android:text="@string/input_description_group" />
+        </TableRow>
+
+        <TableRow style="@style/DialogView">
+
+            <Spinner
+                android:id="@+id/spinnerColor"
+                style="@style/DialogSpinner"
+                android:layout_column="0"
+                android:entries="@array/array_colors" />
+
+            <Spinner
+                android:id="@+id/spinnerGroup"
+                style="@style/DialogSpinner"
+                android:layout_column="1" />
+        </TableRow>
+
+        <TableRow style="@style/DialogView">
+
             <CheckBox
                 android:id="@+id/checkBoxPersistentPin"
                 style="@style/DialogText.CheckBox"

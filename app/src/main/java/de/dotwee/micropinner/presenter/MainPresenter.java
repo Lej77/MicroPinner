@@ -132,6 +132,13 @@ public interface MainPresenter {
         int getPriority();
 
         /**
+         * This method reads the value of the color spinner widget.
+         *
+         * @return Value of the color spinner widget.
+         */
+        int getColor();
+
+        /**
          * This method reads the value of the title editText widget.
          *
          * @return Value of the content title widget.

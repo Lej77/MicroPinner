@@ -21,17 +21,19 @@ public class PinSpec implements Serializable {
 
     private int visibility;
     private int priority;
+    private int color;
 
     private boolean persistent;
     private boolean showActions;
 
-    public PinSpec(@NonNull String title, @NonNull String content, int visibility, int priority, boolean persistent, boolean showActions) {
+    public PinSpec(@NonNull String title, @NonNull String content, int visibility, int priority, int color, boolean persistent, boolean showActions) {
 
         this.id = -1;
         this.title = title;
         this.content = content;
         this.visibility = visibility;
         this.priority = priority;
+        this.color = color;
         this.persistent = persistent;
         this.showActions = showActions;
     }
@@ -44,17 +46,20 @@ public class PinSpec implements Serializable {
         setContent(contentValues.getAsString(PinDatabase.COLUMN_CONTENT));
         setVisibility(contentValues.getAsInteger(PinDatabase.COLUMN_VISIBILITY));
         setPriority(contentValues.getAsInteger(PinDatabase.COLUMN_PRIORITY));
+        Integer color = contentValues.getAsInteger((PinDatabase.COLUMN_COLOR));
+        setColor(color == null ? 0 : color + 1);
         setPersistent(contentValues.getAsInteger(PinDatabase.COLUMN_PERSISTENT) != 0);
         setShowActions(contentValues.getAsInteger(PinDatabase.COLUMN_SHOW_ACTIONS) != 0);
     }
 
-    private PinSpec(int visibility, int priority, @NonNull String title, @NonNull String content,
+    private PinSpec(int visibility, int priority, int color, @NonNull String title, @NonNull String content,
                     boolean persistent, boolean showActions) {
 
         setId(-1);
 
         setVisibility(visibility);
         setPriority(priority);
+        setColor(color);
         setTitle(title);
         setContent(content);
         setPersistent(persistent);
@@ -108,6 +113,17 @@ public class PinSpec implements Serializable {
         this.priority = priority;
     }
 
+    public int getColor() {
+        return color;
+    }
+
+    private void setColor(int color) {
+        if (color < 0 || color > 4) {
+            throw new RuntimeException("Invalid color value " + color);
+        }
+        this.color = color;
+    }
+
     public boolean isPersistent() {
         return persistent;
     }
@@ -132,6 +148,9 @@ public class PinSpec implements Serializable {
         contentValues.put(PinDatabase.COLUMN_CONTENT, getContent());
         contentValues.put(PinDatabase.COLUMN_VISIBILITY, getVisibility());
         contentValues.put(PinDatabase.COLUMN_PRIORITY, getPriority());
+        if (getColor() != 0) {
+            contentValues.put(PinDatabase.COLUMN_COLOR, getColor() - 1);
+        }
         contentValues.put(PinDatabase.COLUMN_PERSISTENT, isPersistent() ? 1 : 0);
         contentValues.put(PinDatabase.COLUMN_SHOW_ACTIONS, isShowActions() ? 1: 0);
 
@@ -156,6 +175,7 @@ public class PinSpec implements Serializable {
                 ", content='" + content + '\'' +
                 ", visibility=" + visibility +
                 ", priority=" + priority +
+                ", color=" + color +
                 ", persistent=" + persistent +
                 ", showActions=" + showActions +
                 '}';

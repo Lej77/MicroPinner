@@ -3,6 +3,7 @@ package de.dotwee.micropinner.database;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
+import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import androidx.annotation.NonNull;
@@ -27,18 +28,29 @@ public class PinDatabase extends SQLiteOpenHelper {
     /* string columns */
     static final String COLUMN_TITLE = "title";
     static final String COLUMN_CONTENT = "content";
+    static final String GROUP_COLUMN_NAME = "name";
     /* integer columns */
     static final String COLUMN_VISIBILITY = "visibility";
     static final String COLUMN_PRIORITY = "priority";
+    static final String COLUMN_COLOR = "color";
     /* boolean columns */
     static final String COLUMN_PERSISTENT = "persistent";
     static final String COLUMN_SHOW_ACTIONS = "show_actions";
+    /* foreign id columns */
+    static final String COLUMN_GROUP_ID = "group_id";
+    /* other */
     private static final String TABLE_PINS = "pins";
+    private static final String TABLE_GROUPS = "groups";
     private static final String TAG = PinDatabase.class.getSimpleName();
     private static final String DATABASE_NAME = "comments.db";
-    private static final int DATABASE_VERSION = 1;
+    private static final int DATABASE_VERSION = 2;
     // Database creation sql statement
-    private static final String DATABASE_CREATE = "create table "
+    private static final String CREATE_TABLE_GROUPS = "create table "
+            + TABLE_GROUPS + "( "
+            + COLUMN_ID + " integer primary key autoincrement, "
+            + GROUP_COLUMN_NAME + " text not null"
+            + "); ";
+    private static final String CREATE_TABLE_PINS = "create table "
             + TABLE_PINS + "( "
 
             + COLUMN_ID + " integer primary key autoincrement, "
@@ -47,17 +59,24 @@ public class PinDatabase extends SQLiteOpenHelper {
 
             + COLUMN_VISIBILITY + " integer not null, "
             + COLUMN_PRIORITY + " integer not null, "
+            + COLUMN_COLOR + " integer default null, "
 
             + COLUMN_PERSISTENT + " integer not null, "
-            + COLUMN_SHOW_ACTIONS + " integer not null);";
+            + COLUMN_SHOW_ACTIONS + " integer not null, "
+
+            + COLUMN_GROUP_ID + " integer default null, "
+            + "FOREIGN KEY("+ COLUMN_GROUP_ID +") REFERENCES "+ TABLE_GROUPS +"("+ COLUMN_ID +")"
+            + ");";
     private static final String[] columns = {
             PinDatabase.COLUMN_ID,
             PinDatabase.COLUMN_TITLE,
             PinDatabase.COLUMN_CONTENT,
             PinDatabase.COLUMN_VISIBILITY,
             PinDatabase.COLUMN_PRIORITY,
+            PinDatabase.COLUMN_COLOR,
             PinDatabase.COLUMN_PERSISTENT,
-            PinDatabase.COLUMN_SHOW_ACTIONS
+            PinDatabase.COLUMN_SHOW_ACTIONS,
+            PinDatabase.COLUMN_GROUP_ID,
     };
     private static PinDatabase instance = null;
     private final SQLiteDatabase database;
@@ -77,15 +96,62 @@ public class PinDatabase extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase sqLiteDatabase) {
-        sqLiteDatabase.execSQL(DATABASE_CREATE);
+        sqLiteDatabase.beginTransaction();
+        try {
+            sqLiteDatabase.execSQL(CREATE_TABLE_GROUPS);
+            sqLiteDatabase.execSQL(CREATE_TABLE_PINS);
+            sqLiteDatabase.setTransactionSuccessful();
+        } catch(SQLException sql) {
+            Log.e(TAG, "Could not upgrade database", sql);
+            throw sql;
+        }
+        finally {
+            sqLiteDatabase.endTransaction();
+        }
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase sqLiteDatabase, int oldVersion, int newVersion) {
-        Log.w(TAG, "Upgrading database from version " + oldVersion + " to " + newVersion + ", which will destroy all old data");
+        Log.w(TAG, "Upgrading database from version " + oldVersion + " to " + newVersion);
 
-        sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + TABLE_PINS);
-        onCreate(sqLiteDatabase);
+        sqLiteDatabase.beginTransaction();
+        try {
+            final String tempTable = "temp_pins";
+            sqLiteDatabase.execSQL("alter table " + TABLE_PINS + " rename to " + tempTable);
+
+            sqLiteDatabase.execSQL("drop table if exists " + TABLE_PINS);
+            sqLiteDatabase.execSQL("drop table if exists " + TABLE_GROUPS);
+
+            sqLiteDatabase.execSQL(CREATE_TABLE_GROUPS);
+            sqLiteDatabase.execSQL(CREATE_TABLE_PINS);
+
+            // Copy data from old table
+            // https://stackoverflow.com/questions/1559789/how-to-copy-data-between-two-tables-in-sqlite
+            final String[] oldColumns = {
+                    PinDatabase.COLUMN_ID,
+                    PinDatabase.COLUMN_TITLE,
+                    PinDatabase.COLUMN_CONTENT,
+                    PinDatabase.COLUMN_VISIBILITY,
+                    PinDatabase.COLUMN_PRIORITY,
+                    PinDatabase.COLUMN_PERSISTENT,
+                    PinDatabase.COLUMN_SHOW_ACTIONS,
+            };
+            final String allOldColumns = String.join(", ", oldColumns);
+            sqLiteDatabase.execSQL("insert into "+TABLE_PINS+" ("+ allOldColumns +") select "+allOldColumns+" from "+tempTable+";");
+
+            sqLiteDatabase.execSQL("drop table if exists " + tempTable);
+
+            //do upgrade here
+            sqLiteDatabase.setTransactionSuccessful();
+        } catch(SQLException sql) {
+            Log.e(TAG, "Could not upgrade database", sql);
+            throw sql;
+        }
+        finally {
+            sqLiteDatabase.endTransaction();
+        }
+
+        Log.d(TAG, "Database '" + DATABASE_NAME + "' upgraded");
     }
 
     /**

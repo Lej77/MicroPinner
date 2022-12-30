@@ -12,4 +12,11 @@
         <item>@string/visibility_private</item>
         <item>@string/visibility_secret</item>
     </string-array>
+
+    <string-array name="array_colors">
+        <item>@string/color_default</item>
+        <item>@string/color_red</item>
+        <item>@string/color_green</item>
+        <item>@string/color_blue</item>
+    </string-array>
 </resources>

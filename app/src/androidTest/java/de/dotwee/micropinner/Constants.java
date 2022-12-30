@@ -13,6 +13,6 @@ public final class Constants {
     public static final String testPinTitle = LOG_TAG, testPinContent = LOG_TAG;    // static pin to test
 
     static {
-        testPin = new PinSpec(testPinTitle, testPinContent, Notification.VISIBILITY_PRIVATE, Notification.PRIORITY_HIGH, true, true);
+        testPin = new PinSpec(testPinTitle, testPinContent, Notification.VISIBILITY_PRIVATE, Notification.PRIORITY_HIGH, 0, true, true);
     }
 }

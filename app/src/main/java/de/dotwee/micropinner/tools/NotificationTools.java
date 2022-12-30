@@ -236,8 +236,26 @@ public class NotificationTools {
                                         .putExtra(EXTRA_INTENT, pin), PendingIntent.FLAG_CANCEL_CURRENT | FLAG_IMMUTABLE))
                         .setOngoing(pin.isPersistent());
 
-        if (BuildConfig.DEBUG) {
-            builder.setColorized(true).setColor(0xA60000);
+        if (pin.getColor() != 0) {
+            builder.setColorized(true);
+            switch (pin.getColor()) {
+                // Red:
+                case 1:
+                    builder.setColor(0xA60000);
+                    break;
+                // Green:
+                case 2:
+                    builder.setColor(0x33944d);
+                    break;
+                // Blue:
+                case 3:
+                    builder.setColor(0x00ace8);
+                    break;
+                default:
+                    throw new RuntimeException("Invalid color " + pin.getColor());
+            }
+        } else if (BuildConfig.DEBUG) {
+            builder.setColorized(true).setColor(0xf0a732);
         }
 
         if (pin.getVisibility() == NotificationCompat.VISIBILITY_PRIVATE && !pin.getContent().isEmpty()) {
