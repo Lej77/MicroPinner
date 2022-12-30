@@ -164,9 +164,7 @@ public class PinSpec implements Serializable {
         contentValues.put(PinDatabase.COLUMN_CONTENT, getContent());
         contentValues.put(PinDatabase.COLUMN_VISIBILITY, getVisibility());
         contentValues.put(PinDatabase.COLUMN_PRIORITY, getPriority());
-        if (getColor() != 0) {
-            contentValues.put(PinDatabase.COLUMN_COLOR, getColor() - 1);
-        }
+        contentValues.put(PinDatabase.COLUMN_COLOR, getColor() == 0 ? null : getColor() - 1);
         contentValues.put(PinDatabase.COLUMN_PERSISTENT, isPersistent() ? 1 : 0);
         contentValues.put(PinDatabase.COLUMN_SHOW_ACTIONS, isShowActions() ? 1: 0);
         contentValues.put(PinDatabase.COLUMN_GROUP_ID, getGroupId());
