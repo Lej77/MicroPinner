@@ -137,7 +137,6 @@ public class PinDatabase extends SQLiteOpenHelper {
             // Copy data from old table
             // https://stackoverflow.com/questions/1559789/how-to-copy-data-between-two-tables-in-sqlite
             final String[] oldColumns = {
-                    PinDatabase.COLUMN_ID,
                     PinDatabase.COLUMN_TITLE,
                     PinDatabase.COLUMN_CONTENT,
                     PinDatabase.COLUMN_VISIBILITY,
