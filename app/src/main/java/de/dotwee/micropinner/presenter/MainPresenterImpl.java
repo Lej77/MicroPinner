@@ -203,7 +203,13 @@ public class MainPresenterImpl implements MainPresenter {
      */
     @Override
     public void onViewExpand(boolean expand) {
-        int[] expandedIds = new int[]{R.id.checkBoxPersistentPin, R.id.checkBoxShowActions};
+        int[] expandedIds = new int[]{
+                R.id.firstSpinnerRow,
+                R.id.firstSpinnerRowDescription,
+                R.id.secondSpinnerRow,
+                R.id.secondSpinnerRowDescription,
+                R.id.checkBoxShowActions
+        };
 
         for (int id : expandedIds) {
             View view = activity.findViewById(id);
