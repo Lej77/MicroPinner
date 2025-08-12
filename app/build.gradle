@@ -18,7 +18,10 @@ android {
     signingConfigs {
         def keystoreFilePath = System.getenv("SIGNING_STORE_FILE") ?: "my-release-key.keystore"
 
-        if (file(keystoreFilePath).exists()) {
+        if (file(keystoreFilePath).exists() ||
+                System.getenv("SIGNING_STORE_PASSWORD") ||
+                System.getenv("SIGNING_KEY_ALIAS") ||
+                System.getenv("SIGNING_KEY_PASSWORD")) {
             release {
                 storeFile file(keystoreFilePath)
                 storePassword System.getenv("SIGNING_STORE_PASSWORD")
