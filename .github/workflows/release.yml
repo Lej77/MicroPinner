@@ -29,7 +29,7 @@ jobs:
           echo $KEYSTORE_FILE | base64 -d > my-release-key.keystore
 
       - name: Build release APK with Gradle
-        run: ./gradlew assembleRelease
+        run: ./gradlew build
         env:
           SIGNING_KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
           SIGNING_KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
@@ -39,7 +39,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: release-apk
-          path: app/release/*
+          path: app/build/outputs/apk/release
           retention-days: 3
           if-no-files-found: error
 
