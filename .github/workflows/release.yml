@@ -26,7 +26,7 @@ jobs:
         env:
           KEYSTORE_FILE: ${{ secrets.KEYSTORE_FILE }}
         run: |
-          echo $KEYSTORE_FILE | base64 -d > my-release-key.keystore
+          echo $KEYSTORE_FILE | base64 -d > app/my-release-key.keystore
 
       - name: Build release APK with Gradle
         run: ./gradlew build
