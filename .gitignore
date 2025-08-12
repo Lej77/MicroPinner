@@ -154,3 +154,9 @@ captures/
 
 # Keystore files
 *.jks
+
+# Grade Built files:
+app/build/
+
+# Intellij APK Release:
+app/release/
