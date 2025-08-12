@@ -16,11 +16,15 @@ android {
     }
 
     signingConfigs {
-        release {
-            storeFile file(System.getenv("SIGNING_STORE_FILE") ?: "my-release-key.keystore")
-            storePassword System.getenv("SIGNING_STORE_PASSWORD")
-            keyAlias System.getenv("SIGNING_KEY_ALIAS")
-            keyPassword System.getenv("SIGNING_KEY_PASSWORD")
+        def keystoreFilePath = System.getenv("SIGNING_STORE_FILE") ?: "my-release-key.keystore"
+
+        if (file(keystoreFilePath).exists()) {
+            release {
+                storeFile file(keystoreFilePath)
+                storePassword System.getenv("SIGNING_STORE_PASSWORD")
+                keyAlias System.getenv("SIGNING_KEY_ALIAS")
+                keyPassword System.getenv("SIGNING_KEY_PASSWORD")
+            }
         }
     }
 
@@ -31,7 +35,10 @@ android {
         }
 
         release {
-            signingConfig signingConfigs.release
+            // Apply signingConfig only if it was configured
+            if (signingConfigs.hasProperty('release')) {
+                signingConfig signingConfigs.release
+            }
             minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
