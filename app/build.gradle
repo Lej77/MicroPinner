@@ -6,11 +6,12 @@ android {
     namespace 'de.dotwee.micropinner'
 
     defaultConfig {
-        applicationId "de.dotwee.micropinner"
         minSdkVersion 16
         targetSdkVersion 33
-        versionCode 29
-        versionName "v2.2.0"
+
+        applicationId "com.lej77.micropinner"
+        versionCode 41
+        versionName "v2.4.5"
 
         testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
     }
